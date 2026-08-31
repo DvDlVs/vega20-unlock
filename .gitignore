@@ -1,0 +1,10 @@
+# backups de runtime (criados por inject.sh)
+backups/*.bin
+backups/pp_table_*.bin
+
+# Python
+__pycache__/
+*.pyc
+
+# configs locais / senhas
+*.env
