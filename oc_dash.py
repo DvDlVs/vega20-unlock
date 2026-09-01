@@ -382,10 +382,16 @@ def main(stdscr):
             last_status = "reset: 1700MHz, 1000Mhz, 940mV, 190W"
 
         elif key in (ord("s"), ord("S")):
-            v0[1] = my_volt
+            # Corrige coerência da curva: pt0 (idle) não pode ter voltagem
+            # >= pt1, senão a GPU segura voltagem alta parada. Se desajustado,
+            # baixa o pt0 para o patamar idle e avisa.
+            corr = ""
+            if v0[1] >= v1[1]:
+                v0[1] = 759 if v1[1] > 759 else max(750, v1[1] - 1)
+                corr = " [curva corrigida: VDDC_0 idle baixado]"
             ok_save = save_profile(sclk_boost, mclk_boost, my_power, v0, v1, v2)
             if ok_save:
-                last_status = f"perfil salvo p/ {PROFILE_SOURCE} (aplicado no boot)"
+                last_status = f"perfil salvo p/ {PROFILE_SOURCE} (aplicado no boot){corr}"
             else:
                 last_err = f"falha ao salvar perfil em {PROFILE_CONF}"
 
